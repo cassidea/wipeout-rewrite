@@ -73,9 +73,9 @@ else ifeq ($(shell uname -o), Msys)
 		L_FLAGS := $(L_FLAGS) -lglew32 -lopengl32
 	endif
 
-	C_FLAGS := $(C_FLAGS) -DSDL_MAIN_HANDLED -D__MSYS__
-	L_FLAGS_SDL = -lSDL2 -lSDL2main
-	L_FLAGS_SOKOL = --pthread -ldl -lasound
+	C_FLAGS := $(C_FLAGS) -DSDL_MAIN_HANDLED
+	L_FLAGS_SDL := $(shell sdl2-config --libs)
+	L_FLAGS_SOKOL = --pthread -lgdi32 -lole32
 
 
 # Windows NON-MSYS ---------------------------------------------------------------
@@ -133,6 +133,7 @@ COMMON_SRC = \
 COMMON_OBJ = $(patsubst %.c, $(BUILD_DIR)/%.o, $(COMMON_SRC))
 COMMON_DEPS = $(patsubst %.c, $(BUILD_DIR)/%.d, $(COMMON_SRC))
 
+sdl: C_FLAGS += $(shell sdl2-config --cflags)
 sdl: $(BUILD_DIR)/src/platform_sdl.o
 sdl: $(COMMON_OBJ)
 	$(CC) $^ -o $(TARGET_NATIVE) $(L_FLAGS) $(L_FLAGS_SDL)
